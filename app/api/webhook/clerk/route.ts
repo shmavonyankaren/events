@@ -44,7 +44,9 @@ export async function POST(req: Request) {
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
     }) as WebhookEvent;
+    alert("Done");
   } catch (err) {
+    alert("err");
     console.error("Error verifying webhook :", err);
     return new Response("Error occured", {
       status: 400,
@@ -67,16 +69,20 @@ export async function POST(req: Request) {
       lastName: last_name,
       photo: image_url,
     };
+    alert(user);
 
     const newUser = await createUser(user);
 
     if (newUser) {
+      alert("eli done");
+
       await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {
           userId: newUser._id,
         },
       });
     }
+    alert("finally done");
 
     return NextResponse.json({ message: "OK", user: newUser });
   }
@@ -90,6 +96,7 @@ export async function POST(req: Request) {
       username: username!,
       photo: image_url,
     };
+    alert(user);
 
     const updatedUser = await updateUser(id, user);
 
@@ -98,6 +105,7 @@ export async function POST(req: Request) {
 
   if (eventType === "user.deleted") {
     const { id } = evt.data;
+    alert(id);
 
     const deletedUser = await deleteUser(id!);
 
