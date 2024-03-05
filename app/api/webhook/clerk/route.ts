@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     }
     alert("finally done");
 
-    return NextResponse.json({ message: "OK", user: newUser });
+    return NextResponse.json({ message: "Received" });
   }
 
   if (eventType === "user.updated") {
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
 
     const updatedUser = await updateUser(id, user);
 
-    return NextResponse.json({ message: "OK", user: updatedUser });
+    return NextResponse.json({ message: "Received" });
   }
 
   if (eventType === "user.deleted") {
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
 
     const deletedUser = await deleteUser(id!);
 
-    return NextResponse.json({ message: "OK", user: deletedUser });
+    return NextResponse.json({ message: "Received" });
   }
 
   return new Response("", { status: 200 });
