@@ -80,11 +80,7 @@ export async function POST(req: Request) {
         },
       });
     }
-    return NextResponse.json({
-      statusbar: 200,
-      message: "Received",
-      user: newUser,
-    });
+    return new Response("Success", { status: 200 });
   }
 
   if (eventType === "user.updated") {
@@ -100,11 +96,7 @@ export async function POST(req: Request) {
 
     const updatedUser = await updateUser(id, user);
 
-    return NextResponse.json({
-      statusbar: 200,
-      message: "OK",
-      user: updatedUser,
-    });
+    return new Response("Success", { status: 200 });
   }
 
   if (eventType === "user.deleted") {
@@ -113,12 +105,8 @@ export async function POST(req: Request) {
 
     const deletedUser = await deleteUser(id!);
 
-    return NextResponse.json({
-      statusbar: 200,
-      message: "OK",
-      user: deletedUser,
-    });
+    return new Response("Success", { status: 200 });
   }
 
-  return new Response("", { status: 200 });
+  return new Response("Success", { status: 200 });
 }
