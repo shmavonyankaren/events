@@ -74,17 +74,13 @@ export async function POST(req: Request) {
     const newUser = await createUser(user);
 
     if (newUser) {
-      alert("eli done");
-
       await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {
           userId: newUser._id,
         },
       });
     }
-    alert("finally done");
-
-    return NextResponse.json({ message: "OK", user: newUser });
+    return NextResponse.json({ message: "Received", user: newUser });
   }
 
   if (eventType === "user.updated") {
