@@ -8,7 +8,7 @@ let isConnected = false;
 export const connectToDatabase = async () => {
   // if (cached.conn) return cached.conn;
 
-  // if (!MONGODB_URI) throw new Error("MONGODB_URI is missing");
+  if (!MONGODB_URI) throw new Error("MONGODB_URI is missing");
 
   // cached.promise =
   //   cached.promise ||
@@ -24,17 +24,15 @@ export const connectToDatabase = async () => {
   if (isConnected) {
     console.log("MongoDB is already connected");
     return;
-    try {
-      await mongoose.connect(MONGODB_URI, {
-        dbName: "events",
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        bufferCommands: false,
-      });
-      isConnected = true;
-      console.log("MongoDB is connected");
-    } catch (error) {
-      console.log(error);
-    }
+  }
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      dbName: "events",
+      bufferCommands: false,
+    });
+    isConnected = true;
+    console.log("MongoDB is connected");
+  } catch (error) {
+    console.log(error);
   }
 };
