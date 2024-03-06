@@ -23,6 +23,23 @@ export async function createUser(user: CreateUserParams) {
   }
 }
 
+export async function createOrUpdataUser(
+  clerkId: string,
+  user: UpdateUserParams
+) {
+  try {
+    await connectToDatabase();
+    const newUser = await User.findOneAndUpdate(
+      { clerkId },
+      { $set: user },
+      { upsert: true, new: true }
+    );
+    newUser.save();
+  } catch (error) {
+    handleError(error);
+  }
+}
+
 export async function getUserById(userId: string) {
   try {
     await connectToDatabase();
