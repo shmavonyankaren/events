@@ -60,51 +60,10 @@ export async function POST(req: Request) {
   const { id } = evt.data;
   const eventType = evt.type;
 
-  // if (eventType === "user.created") {
-  //   const { id, email_addresses, image_url, first_name, last_name, username } =
-  //     evt.data;
-
-  //   const user = {
-  //     clerkId: id,
-  //     email: email_addresses[0].email_address,
-  //     username: username!,
-  //     firstName: first_name,
-  //     lastName: last_name,
-  //     photo: image_url,
-  //   };
-  //   console.log(user);
-
-  //   const newUser = await createUser(user);
-
-  //   if (newUser) {
-  //     await clerkClient.users.updateUserMetadata(id, {
-  //       publicMetadata: {
-  //         userId: newUser._id,
-  //       },
-  //     });
-  //   }
-
-  //   return NextResponse.json({ message: "OK", user: newUser });
-  // }
-
-  // if (eventType === "user.updated") {
-  //   const { id, image_url, first_name, last_name, username } = evt.data;
-
-  //   const user = {
-  //     firstName: first_name,
-  //     lastName: last_name,
-  //     username: username!,
-  //     photo: image_url,
-  //   };
-
-  //   const updatedUser = await updateUser(id, user);
-
-  //   return NextResponse.json({ message: "OK", user: updatedUser });
-  // }
-
-  if (eventType === "user.created" || eventType === "user.updated") {
+  if (eventType === "user.created") {
     const { id, email_addresses, image_url, first_name, last_name, username } =
       evt.data;
+
     const user = {
       clerkId: id,
       email: email_addresses[0].email_address,
@@ -113,14 +72,61 @@ export async function POST(req: Request) {
       lastName: last_name,
       photo: image_url,
     };
+    console.log(user);
 
     try {
-      await createOrUpdataUser(id, user);
-      return new Response("User is created or updated", { status: 200 });
+      const newUser = await createUser(user);
+
+      if (newUser) {
+        await clerkClient.users.updateUserMetadata(id, {
+          publicMetadata: {
+            userId: newUser._id,
+          },
+        });
+      }
+
+      return NextResponse.json({ message: "OK", user: newUser });
     } catch (error) {
-      return new Response("Error", { status: 500 });
+      return new Response("Error while creating", { status: 500 });
     }
   }
+
+  if (eventType === "user.updated") {
+    const { id, image_url, first_name, last_name, username } = evt.data;
+
+    const user = {
+      firstName: first_name,
+      lastName: last_name,
+      username: username!,
+      photo: image_url,
+    };
+    try {
+      const updatedUser = await updateUser(id, user);
+      return NextResponse.json({ message: "OK", user: updatedUser });
+    } catch (error) {
+      return new Response("Error while updating", { status: 500 });
+    }
+  }
+
+  // if (eventType === "user.created" || eventType === "user.updated") {
+  //   const { id, email_addresses, image_url, first_name, last_name, username } =
+  //     evt.data;
+  //   const user = {
+  //     clerkId: id,
+  //     email: email_addresses[0].email_address,
+  //     username: username!,
+  //     firstName: first_name,
+  //     lastName: last_name,
+  //     photo: image_url,
+  //   };
+
+  //   try {
+  //     await createOrUpdataUser(id, user);
+  //     return new Response("User is created or updated", { status: 200 });
+  //   } catch (error) {
+  //     return new Response("Error", { status: 500 });
+  //   }
+  // }
 
   if (eventType === "user.deleted") {
     const { id } = evt.data;
@@ -130,5 +136,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "OK", user: deletedUser });
   }
 
-  return new Response("", { status: 200 });
+  return new Response("Yes", { status: 200 });
 }
