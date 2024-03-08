@@ -37,7 +37,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
           </div>
 
           <Image
-            src="/assets/images/hero.png"
+            src="/assets/images/Hero6.png"
             alt="hero"
             width={1000}
             height={1000}
@@ -50,9 +50,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
         id="events"
         className="wrapper my-8 flex flex-col gap-8 md:gap-12"
       >
-        <h2 className="h2-bold">
-          "Never miss <br /> Your new event
-        </h2>
+        <h2 className="h2-bold">Never miss new event</h2>
 
         <div className="flex w-full flex-col gap-5 md:flex-row">
           <Search />
