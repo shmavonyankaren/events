@@ -72,7 +72,11 @@
   margin: 0;
   scroll-behavior: smooth;
 }
-
+@media screen and (max-width: 500px) {
+  .event-page {
+    margin-top: 100px;
+  }
+}
 body {
   font-family: var(--font-poppins);
 }
