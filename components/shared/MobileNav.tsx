@@ -31,7 +31,7 @@ const MobileNav = () => {
               height={70}
               alt="Events logo"
             />
-            <h2 className="h2-bold text-center">Events</h2>
+            <h2 className="h2-bold text-center logo-name">Events</h2>
           </div>
           <Separator className="border border-gray-50" />
           <NavItems />

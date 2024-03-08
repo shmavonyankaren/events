@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url("https://fonts.googleapis.com/css2?family=Fjalla+One&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -64,6 +64,13 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
+}
+
+.logo-name {
+  font-family: "Lora", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
 }
 
 * {

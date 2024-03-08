@@ -16,7 +16,7 @@ const Header = () => {
             height={70}
             alt="Events logo"
           />
-          <h2 className="h2-bold text-center">Events</h2>
+          <h2 className="h2-bold text-center logo-name">Events</h2>
         </Link>
         <div className="flex">
           <SignedIn>
