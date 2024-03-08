@@ -86,8 +86,10 @@ export async function POST(req: Request) {
       }
 
       return NextResponse.json({ message: "OK", user: newUser });
-    } catch (error) {
-      return new Response("Error while creating", { status: 500 });
+    } catch (error: any) {
+      return new Response(`Error while creating ${error.message}`, {
+        status: 500,
+      });
     }
   }
 
@@ -103,8 +105,10 @@ export async function POST(req: Request) {
     try {
       const updatedUser = await updateUser(id, user);
       return NextResponse.json({ message: "OK", user: updatedUser });
-    } catch (error) {
-      return new Response("Error while updating", { status: 500 });
+    } catch (error: any) {
+      return new Response(`Error while updating ${error.message}`, {
+        status: 500,
+      });
     }
   }
 
