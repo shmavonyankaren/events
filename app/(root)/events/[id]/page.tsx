@@ -47,8 +47,15 @@ const EventDetails = async ({
                   </p>
                 </div>
 
-                <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
+                <p className="flex gap-2 items-center p-medium-18 ml-2 mt-2 sm:mt-0">
                   by{" "}
+                  <Image
+                    className="rounded-full max-h-[32px] max-w-[32px]"
+                    src={event.organizer.photo}
+                    alt="event creator"
+                    width={32}
+                    height={32}
+                  />
                   <span className="text-primary-500">
                     {event.organizer.firstName} {event.organizer.lastName}
                   </span>
