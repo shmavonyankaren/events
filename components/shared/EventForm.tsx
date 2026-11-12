@@ -24,17 +24,18 @@ import { IEvent } from "@/lib/database/models/event.model"
 
 
 type EventFormProps = {
-  userId: string
   type: "Create" | "Update"
   event?: IEvent,
   eventId?: string
 }
 
-const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
+const EventForm = ({ type, event, eventId }: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([])
   const initialValues = event && type === 'Update' 
     ? { 
-      ...event, 
+      ...event,
+      categoryId: event.category._id,
+      url: event.url || "",
       startDateTime: new Date(event.startDateTime), 
       endDateTime: new Date(event.endDateTime) 
     }
@@ -49,55 +50,39 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   })
  
   async function onSubmit(values: z.infer<typeof eventFormSchema>) {
-    let uploadedImageUrl = values.imageUrl;
-
-    if(files.length > 0) {
-      const uploadedImages = await startUpload(files)
-
-      if(!uploadedImages) {
-        return
-      }
-
-      uploadedImageUrl = uploadedImages[0].url
-    }
-
-    if(type === 'Create') {
-      try {
-        const newEvent = await createEvent({
-          event: { ...values, imageUrl: uploadedImageUrl },
-          userId,
-          path: '/profile'
-        })
-
-        if(newEvent) {
-          form.reset();
-          router.push(`/events/${newEvent._id}`)
+    form.clearErrors('root');
+    try {
+      let uploadedImageUrl = values.imageUrl;
+      if (files.length > 0) {
+        const uploadedImages = await startUpload(files);
+        if (!uploadedImages?.[0]) {
+          form.setError('root', { message: 'Image upload failed. Please try again.' });
+          return;
         }
-      } catch (error) {
-        console.log(error);
+        uploadedImageUrl = uploadedImages[0].url;
       }
-    }
 
-    if(type === 'Update') {
-      if(!eventId) {
-        router.back()
+      if (type === 'Update' && !eventId) {
+        form.setError('root', { message: 'Event not found. Please reload the page.' });
         return;
       }
 
-      try {
-        const updatedEvent = await updateEvent({
-          userId,
-          event: { ...values, imageUrl: uploadedImageUrl, _id: eventId },
-          path: `/events/${eventId}`
-        })
+      const eventValues = { ...values, imageUrl: uploadedImageUrl };
+      const result = type === 'Create'
+        ? await createEvent({ event: eventValues, path: '/profile' })
+        : await updateEvent({ event: { ...eventValues, _id: eventId! }, path: '/events/' + eventId });
 
-        if(updatedEvent) {
-          form.reset();
-          router.push(`/events/${updatedEvent._id}`)
-        }
-      } catch (error) {
-        console.log(error);
+      if (result.error) {
+        form.setError('root', { message: result.error });
+        return;
       }
+      if (result.data) {
+        form.reset();
+        router.push('/events/' + result.data._id);
+      }
+    } catch (error) {
+      console.error(error);
+      form.setError('root', { message: 'Unable to save your event. Please try again.' });
     }
   }
 
@@ -138,8 +123,9 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl className="h-72">
-                    <Textarea placeholder="Description" {...field} className="textarea rounded-2xl" />
+                    <Textarea placeholder="Description" maxLength={1000} {...field} className="textarea rounded-2xl" />
                   </FormControl>
+                  <FormDescription>{field.value?.length || 0}/1000 characters</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -307,7 +293,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                         height={24}
                       />
 
-                      <Input placeholder="URL" {...field} className="input-field" />
+                      <Input placeholder="URL (optional)" {...field} className="input-field" />
                     </div>
 
                   </FormControl>
@@ -317,6 +303,10 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             />
         </div>
 
+
+        {form.formState.errors.root && (
+          <p role="alert" className="text-sm text-red-600">{form.formState.errors.root.message}</p>
+        )}
 
         <Button 
           type="submit"

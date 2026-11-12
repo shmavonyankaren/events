@@ -1,10 +1,10 @@
 import EventForm from "@/components/shared/EventForm"
 import { auth } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 const CreateEvent = () => {
-  const { sessionClaims } = auth();
-
-  const userId = sessionClaims?.userId as string;
+  const { userId } = auth();
+  if (!userId) redirect("/sign-in");
 
   return (
     <>
@@ -13,7 +13,7 @@ const CreateEvent = () => {
       </section>
 
       <div className="wrapper my-8">
-        <EventForm userId={userId} type="Create" />
+        <EventForm type="Create" />
       </div>
     </>
   )

@@ -25,14 +25,15 @@ const EventDetails = async ({
     <>
       <section className="flex justify-center bg-primary-50 bg-dotted-pattern bg-contain">
         <div className="grid grid-cols-1  md:grid-cols-2 2xl:max-w-7xl mt-2 mr-2 ml-2">
-          <Image
-            src={event.imageUrl}
-            alt="hero image"
-            width={1000}
-            height={1000}
-            className="event-image h-full min-h-[300px] object-cover object-center rounded-lg  m-auto max-h-[500px]"
-          />
-
+          <div className="py-5 md:py-10 pl-5">
+            <Image
+              src={event.imageUrl}
+              alt="hero image"
+              width={1000}
+              height={1000}
+              className="event-image h-full min-h-[300px] object-cover object-center rounded-lg  m-auto max-h-[500px]"
+            />
+          </div>
           <div className="event-page flex w-full flex-col gap-8 p-5 md:p-10 pl-5">
             <div className="flex flex-col gap-6">
               <h2 className="h2-bold">{event.title}</h2>
@@ -100,11 +101,13 @@ const EventDetails = async ({
             <div className="flex flex-col gap-2">
               <p className="p-bold-20 text-grey-600">What You'll Learn:</p>
               <p className="p-medium-16 lg:p-regular-18">{event.description}</p>
-              <Link href={event.url}>
-                <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
-                  {event.url}
-                </p>
-              </Link>
+              {event.url && (
+                <Link href={event.url}>
+                  <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
+                    {event.url}
+                  </p>
+                </Link>
+              )}
             </div>
           </div>
         </div>

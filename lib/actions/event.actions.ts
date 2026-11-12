@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@clerk/nextjs";
+import { eventFormSchema } from "@/lib/validator";
 
 import { connectToDatabase } from "@/lib/database";
 import Event from "@/lib/database/models/event.model";
@@ -32,23 +34,29 @@ const populateEvent = (query: any) => {
 };
 
 // CREATE
-export async function createEvent({ userId, event, path }: CreateEventParams) {
+export async function createEvent({ event, path }: CreateEventParams) {
   try {
+    const { userId: clerkId } = auth();
+    if (!clerkId) return { error: "Please sign in to create an event." };
+    const validated = eventFormSchema.safeParse(event);
+    if (!validated.success) return { error: validated.error.issues[0].message };
     await connectToDatabase();
 
-    const organizer = await User.findById(userId);
-    if (!organizer) throw new Error("Organizer not found");
+    const organizer = await User.findOne({ clerkId });
+    if (!organizer) return { error: "Your account profile has not synced yet. Please contact support to finish account setup." };
 
     const newEvent = await Event.create({
-      ...event,
-      category: event.categoryId,
-      organizer: userId,
+      ...validated.data,
+      url: validated.data.url || "",
+      category: validated.data.categoryId,
+      organizer: organizer._id,
     });
     revalidatePath(path);
 
-    return JSON.parse(JSON.stringify(newEvent));
+    return { data: JSON.parse(JSON.stringify(newEvent)) as { _id: string } };
   } catch (error) {
-    handleError(error);
+    console.error("Failed to create event", error);
+    return { error: "Unable to create your event. Please try again." };
   }
 }
 
@@ -68,25 +76,32 @@ export async function getEventById(eventId: string) {
 }
 
 // UPDATE
-export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+export async function updateEvent({ event, path }: UpdateEventParams) {
   try {
+    const { userId: clerkId } = auth();
+    if (!clerkId) return { error: "Please sign in to update an event." };
+    const validated = eventFormSchema.safeParse(event);
+    if (!validated.success) return { error: validated.error.issues[0].message };
     await connectToDatabase();
 
+    const organizer = await User.findOne({ clerkId });
+    if (!organizer) return { error: "Your account profile has not synced yet. Please contact support to finish account setup." };
     const eventToUpdate = await Event.findById(event._id);
-    if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
-      throw new Error("Unauthorized or event not found");
+    if (!eventToUpdate || eventToUpdate.organizer?.toString() !== organizer._id.toString()) {
+      return { error: "You do not have permission to update this event." };
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(
       event._id,
-      { ...event, category: event.categoryId },
-      { new: true }
+      { ...validated.data, url: validated.data.url || "", category: validated.data.categoryId },
+      { new: true, runValidators: true }
     );
     revalidatePath(path);
 
-    return JSON.parse(JSON.stringify(updatedEvent));
+    return { data: JSON.parse(JSON.stringify(updatedEvent)) as { _id: string } };
   } catch (error) {
-    handleError(error);
+    console.error("Failed to update event", error);
+    return { error: "Unable to update your event. Please try again." };
   }
 }
 
