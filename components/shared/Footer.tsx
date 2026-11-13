@@ -15,7 +15,7 @@ const Footer = () => {
           <h2 className="h2-bold text-center logo-name">Events</h2>
         </Link>
 
-        <p>2024 Events. All Rights reserved.</p>
+        <p>{new Date().getFullYear()} Events. All Rights reserved.</p>
       </div>
     </footer>
   );
