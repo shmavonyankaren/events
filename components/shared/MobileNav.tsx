@@ -14,7 +14,7 @@ const MobileNav = () => {
   return (
     <nav className="md:hidden">
       <Sheet>
-        <SheetTrigger className="align-middle">
+        <SheetTrigger className="flex h-11 w-11 items-center justify-center" aria-label="Open navigation">
           <Image
             src="/assets/icons/menu.svg"
             alt="menu"
@@ -30,8 +30,9 @@ const MobileNav = () => {
               width={70}
               height={70}
               alt="Events logo"
+              className="h-12 w-12"
             />
-            <h2 className="h2-bold text-center logo-name">Events</h2>
+            <h2 className="logo-name text-2xl leading-tight">Events</h2>
           </div>
           <Separator className="border border-gray-50" />
           <NavItems />

@@ -13,13 +13,13 @@ const CheckoutButton = ({ event }: { event: IEvent }) => {
   const hasEventFinished = new Date(event.endDateTime) < new Date();
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex min-w-0 items-center gap-3">
       {hasEventFinished ? (
-        <p className="p-2 text-red-400">Sorry, tickets are no longer available.</p>
+        <p className="text-sm leading-6 text-red-400 sm:text-base">Sorry, tickets are no longer available.</p>
       ): (
         <>
           <SignedOut>
-            <Button asChild className="button rounded-full" size="lg">
+            <Button asChild className="h-12 w-full rounded-full px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-base" size="lg">
               <Link href="/sign-in">
                 Get Tickets
               </Link>

@@ -35,8 +35,8 @@ const Checkout = ({ event, userId }: { event: IEvent; userId: string }) => {
   };
 
   return (
-    <form action={onCheckout} method="post">
-      <Button type="submit" role="link" size="lg" className="button sm:w-fit">
+    <form action={onCheckout} method="post" className="w-full sm:w-auto">
+      <Button type="submit" role="link" size="lg" className="h-12 w-full rounded-full px-6 py-3 text-sm sm:w-auto sm:px-8 sm:text-base">
         {event.isFree ? "Get Ticket" : "Buy Ticket"}
       </Button>
     </form>
